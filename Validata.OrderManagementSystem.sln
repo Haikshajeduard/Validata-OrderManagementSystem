@@ -1,14 +1,22 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Validata.OrderManagementSystem.Web.API", "Validata.OrderManagementSystem.Web.API\Validata.OrderManagementSystem.Web.API.csproj", "{26E8DAFB-9094-4F22-B8A3-E75F2BD9F8BA}"
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35222.181
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Validata.OrderManagementSystem.Web.API", "Validata.OrderManagementSystem.Web.API\Validata.OrderManagementSystem.Web.API.csproj", "{26E8DAFB-9094-4F22-B8A3-E75F2BD9F8BA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Validata.OrderManagementSystem.Configuration", "Validata.OrderManagementSystem.Configuration\Validata.OrderManagementSystem.Configuration.csproj", "{8DFBEFDF-2885-4694-B2EB-67D61039831C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Validata.OrderManagementSystem.Configuration", "Validata.OrderManagementSystem.Configuration\Validata.OrderManagementSystem.Configuration.csproj", "{8DFBEFDF-2885-4694-B2EB-67D61039831C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Validata.OrderManagementSystem.Application", "Validata.OrderManagementSystem.Application\Validata.OrderManagementSystem.Application.csproj", "{D0220006-90E8-4796-9D05-8EC53559B13E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Validata.OrderManagementSystem.Application", "Validata.OrderManagementSystem.Application\Validata.OrderManagementSystem.Application.csproj", "{D0220006-90E8-4796-9D05-8EC53559B13E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Validata.OrderManagementSystem.Domain", "Validata.OrderManagementSystem.Domain\Validata.OrderManagementSystem.Domain.csproj", "{A8AEE49F-7E2C-4291-9FD4-D1B7A6E7C29D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Validata.OrderManagementSystem.Domain", "Validata.OrderManagementSystem.Domain\Validata.OrderManagementSystem.Domain.csproj", "{A8AEE49F-7E2C-4291-9FD4-D1B7A6E7C29D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Validata.OrderManagementSystem.Persistence", "Validata.OrderManagementSystem.Persistence\Validata.OrderManagementSystem.Persistence.csproj", "{2640CC62-8415-46BD-8534-A93F43386851}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Validata.OrderManagementSystem.Persistence", "Validata.OrderManagementSystem.Persistence\Validata.OrderManagementSystem.Persistence.csproj", "{2640CC62-8415-46BD-8534-A93F43386851}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EFB1FA4E-2ADA-45F2-9349-60A092C92F1E}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,5 +44,8 @@ Global
 		{2640CC62-8415-46BD-8534-A93F43386851}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2640CC62-8415-46BD-8534-A93F43386851}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2640CC62-8415-46BD-8534-A93F43386851}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal

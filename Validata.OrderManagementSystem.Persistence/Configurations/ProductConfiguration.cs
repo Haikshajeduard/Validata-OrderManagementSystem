@@ -8,6 +8,12 @@ public class ProductConfiguration : EntityTypeConfiguration<Product>
 {
     protected override void ConfigureEntity(EntityTypeBuilder<Product> builder)
     {
+        //set identity off for product
+        builder.Property(x => x.Id)
+            .HasColumnName("Id")
+            .ValueGeneratedNever()
+            .IsRequired();
+
         builder.Property(x => x.Name)
             .HasColumnName("Name")
             .IsRequired();

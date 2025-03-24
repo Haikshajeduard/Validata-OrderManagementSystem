@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Validata.OrderManagementSystem.Persistence;
 using Validata.OrderManagementSystem.Persistence.Repositories;
+using Validata.OrderManagementSystem.Persistence.Repositories.OrderItems;
 
 namespace Validata.OrderManagementSystem.Configuration.Extensions;
 
@@ -13,6 +14,7 @@ public static class DatabaseExtensions
         services.AddDbContext<ApplicationDBContext>(opt => opt.UseSqlServer(configuration.GetConnectionString("Default")));
         services.AddScoped<IApplicationDBContext, ApplicationDBContext>();
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+        services.AddScoped<IOrderItemRepository, OrderItemRepository>();
         services.AddScoped<UnitOfWork>();
         
         return services;

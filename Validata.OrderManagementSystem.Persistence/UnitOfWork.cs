@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using Validata.OrderManagementSystem.Domain.Entities;
 using Validata.OrderManagementSystem.Persistence.Repositories;
+using Validata.OrderManagementSystem.Persistence.Repositories.OrderItems;
 
 namespace Validata.OrderManagementSystem.Persistence;
 
@@ -9,7 +10,7 @@ public class UnitOfWork
     private readonly IApplicationDBContext _context;
     public IRepository<Customer> Customers { get; }
     public IRepository<Order> Orders { get; }
-    public IRepository<OrderItem> OrderItems { get; }
+    public IOrderItemRepository OrderItems { get; }
     public IRepository<Item> Items { get; }
     public IRepository<Product> Products { get; }
     
@@ -17,9 +18,10 @@ public class UnitOfWork
         IRepository<Product> products,
         IRepository<Order> orders,
         IRepository<Item> items,
-        IRepository<OrderItem> orderItems,
+        IOrderItemRepository orderItems,
         IRepository<Customer> customers)
     {
+        _context = context;
         Products = products;
         Orders = orders;
         Items = items;

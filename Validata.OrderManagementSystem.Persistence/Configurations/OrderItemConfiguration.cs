@@ -22,12 +22,12 @@ public class OrderItemConfiguration : EntityTypeConfiguration<OrderItem>
     {
         builder.HasOne(x => x.Order)
             .WithMany(x => x.OrderItems)
-            .OnDelete(DeleteBehavior.Restrict)
+            .OnDelete(DeleteBehavior.Cascade)
             .HasForeignKey(x => x.OrderId);
 
         builder.HasOne(x => x.Item)
             .WithMany(x => x.OrderItems)
-            .OnDelete(DeleteBehavior.Restrict)
+            .OnDelete(DeleteBehavior.Cascade)
             .HasForeignKey(x => x.ItemId);
     }
 }

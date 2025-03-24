@@ -10,13 +10,13 @@ namespace Validata.OrderManagementSystem.Persistence.Repositories;
 
 public class Repository<T> : IRepository<T> where T : BaseEntity
 {
-    protected readonly DbContext _context;
+    protected readonly ApplicationDBContext _context;
     protected readonly DbSet<T> _dbSet;
 
-    public Repository(DbContext context)
+    public Repository(IApplicationDBContext context)
     {
-        _context = context;
-        _dbSet = context.Set<T>();
+        _context = (ApplicationDBContext)context;
+        _dbSet = _context.Set<T>();
     }
 
     public async Task<T> GetByIdAsync(int id)
@@ -46,7 +46,7 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
         return result.Entity;
     }
 
-    public void Remove(T entity)
+    public void Delete(T entity)
     {
         _dbSet.Remove(entity);
     }

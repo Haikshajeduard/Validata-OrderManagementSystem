@@ -12,9 +12,6 @@ public class DeleteCustomer
     public partial class DeleteCustomerCommand : IRequest<Unit>
     {
         public int Id { get; set; }
-        public string Name { get; set; }
-        public string Address { get; set; }
-        public long PostalCode { get; set; }
     }
     public partial class DeleteCustomerCommandHandler : IRequestHandler<DeleteCustomerCommand, Unit>
     {
@@ -37,7 +34,7 @@ public class DeleteCustomer
                 if(oldEntity == null)
                     throw new Exception("Customer not found");
                
-                _unitOfWork.Customers.Remove(oldEntity);
+                _unitOfWork.Customers.Delete(oldEntity);
                 await _unitOfWork.SaveChangesAsync();
                 _logger.LogInformation($"Customer {oldEntity.Name} with id: {oldEntity.Id} deleted");
                 return Unit.Value;

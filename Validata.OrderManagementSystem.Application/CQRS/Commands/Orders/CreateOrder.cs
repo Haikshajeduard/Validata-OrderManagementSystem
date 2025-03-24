@@ -10,12 +10,12 @@ namespace Validata.OrderManagementSystem.Application.CQRS.Commands.Orders;
 
 public class CreateOrder
 {
-    public partial class CreateOrderCommand : IRequest<bool>
+    public partial class CreateOrderCommand : IRequest<int>
     {
         public int CustomerId { get; set; }
         public List<AddItemModel> Items { get; set; }
     }
-    public partial class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, bool>
+    public partial class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, int>
     {
         private readonly ILogger<CreateOrderCommandHandler> _logger;
         private readonly UnitOfWork _unitOfWork;
@@ -29,7 +29,7 @@ public class CreateOrder
             _mapper = mapper;
             _context = context;
         }
-        public async Task<bool> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
+        public async Task<int> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
         {
             try
             {
@@ -38,9 +38,18 @@ public class CreateOrder
                 
                 if(request.Items is null || request.Items.Count == 0)
                     throw new ArgumentNullException("Please provide at least one item");
-                
+
+                var customer = await _unitOfWork.Customers.GetByIdAsync(request.CustomerId);
+                if(customer is null)
+                    throw new ArgumentNullException("Please provide customer");
+
                 var selectedProductsAndQuantity = request.Items.ToDictionary(item => item.ProductId, item => item.Quantity);
-                var selectedProducts = await _unitOfWork.Products.FindAsync(x=>selectedProductsAndQuantity.ContainsKey(x.Id));
+                var selectedProductIds = selectedProductsAndQuantity.Keys.ToList();
+                var selectedProducts = await _unitOfWork.Products.FindAsync(x=> selectedProductIds.Contains(x.Id));
+
+                if(selectedProducts is null || selectedProducts.Count() == 0)
+                    throw new ArgumentNullException("Please provide valid products");
+
                 var totalPrice = selectedProducts.Sum(product => product.Price * selectedProductsAndQuantity[product.Id]);
                 var order = new Order
                 {
@@ -52,12 +61,13 @@ public class CreateOrder
                             Quantity = x.Quantity
                         }
                     }).ToList(),
-                    TotalPrice = totalPrice
+                    TotalPrice = totalPrice,
+                    OrderDate = DateTime.UtcNow
                 };
                 
-                var customer = await _unitOfWork.Orders.AddAsync(order);
+                order = await _unitOfWork.Orders.AddAsync(order);
                 await _unitOfWork.SaveChangesAsync();
-                return true;
+                return order.Id;
             }
             catch (Exception e)
             {

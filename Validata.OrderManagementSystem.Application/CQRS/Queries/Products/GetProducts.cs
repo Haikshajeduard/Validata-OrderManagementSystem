@@ -12,8 +12,6 @@ public class GetProducts
 {
     public partial class GetProductsQuery : IRequest<IEnumerable<ProductModel>>
     {
-        public int CustomerId { get; set; }
-        public DateTime? OrderDate { get; set; }
     }
 
     public partial class GetProductsQueryHandler : IRequestHandler<GetProductsQuery, IEnumerable<ProductModel>>

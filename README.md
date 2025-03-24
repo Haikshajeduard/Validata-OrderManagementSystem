@@ -1,16 +1,17 @@
 Notes about designing the API
 
-First we start with defining the project structure where we separate the 
+First we start with defining the project structure where we separate the
 functionality of the code in ClassLibraries for better use.
 
 We define projects:
+
     Application - holds the Business Logic of the application
     Configuration - holds the code that is used for application configurations
     Domain - holds the code that is used for defining the entities and other domain
              files like structs, enums, constants and so on
-    Persistence - holds the code that is used to make possible the communication 
+    Persistence - holds the code that is used to make possible the communication
                   of the application with the database and database configurations
-    WEB.API - holds the code that defines the entry points of the API and often 
+    WEB.API - holds the code that defines the entry points of the API and often
               is referred as presentation layer
 
 We proceed to declare the entities that will be used from the application
@@ -31,8 +32,8 @@ After that we make sure to register the services and repositories that are injec
 we configure the extension methods on the Configuration library so that we can easily extend and
 separate services
 
-We proceed to create a seeding service that makes sure that on the app start the migrations are 
-applied and the database is up and running, also it makes sure to seed the data needed for the app 
+We proceed to create a seeding service that makes sure that on the app start the migrations are
+applied and the database is up and running, also it makes sure to seed the data needed for the app
 to be functional when it starts(in this case products)
 
 We design the controllers and endpoints that will be exposed to accept requests from other services

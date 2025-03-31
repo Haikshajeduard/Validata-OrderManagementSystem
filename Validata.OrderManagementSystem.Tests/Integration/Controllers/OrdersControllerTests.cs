@@ -13,7 +13,6 @@ public class OrdersControllerTests : IntegrationTestBase
     [Test]
     public async Task CreateOrder_ShouldReturnOrderId()
     {
-        // Arrange
         var client = CreateClient();
         var order = new
         {
@@ -22,10 +21,8 @@ public class OrdersControllerTests : IntegrationTestBase
         };
         var content = new StringContent(JsonConvert.SerializeObject(order), Encoding.UTF8, "application/json");
 
-        // Act
         var response = await client.PostAsync("/api/orders", content);
 
-        // Assert
         response.EnsureSuccessStatusCode();
         var result = await response.Content.ReadAsStringAsync();
         Assert.IsNotEmpty(result);

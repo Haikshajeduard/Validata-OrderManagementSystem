@@ -1,4 +1,6 @@
+using AutoMapper;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -9,6 +11,8 @@ using Validata.OrderManagementSystem.Application.CQRS.Queries.Customers;
 using Validata.OrderManagementSystem.Application.Models.Customers;
 using Validata.OrderManagementSystem.Domain.Entities;
 using Validata.OrderManagementSystem.Persistence;
+using Validata.OrderManagementSystem.Persistence.Repositories;
+using Validata.OrderManagementSystem.Persistence.Repositories.OrderItems;
 
 namespace Validata.OrderManagementSystem.Tests.Unit.Queries;
 
@@ -48,7 +52,6 @@ public class GetCustomersQueryHandlerTests : BaseTest
     [Test]
     public async Task Handle_ShouldReturnCustomers_WhenCustomersExist()
     {
-        // Arrange
         var customers = new List<Customer>
         {
             new Customer { Id = 1, Name = "John Doe", Address = "123 Main St", PostalCode = 12345 },
@@ -64,10 +67,8 @@ public class GetCustomersQueryHandlerTests : BaseTest
         _unitOfWorkMock.Setup(x => x.Customers.GetAllAsync()).ReturnsAsync(customers);
         _mapperMock.Setup(x => x.Map<IEnumerable<CustomerModel>>(customers)).Returns(customerModels);
 
-        // Act
         var result = await _handler.Handle(new GetCustomers.GetCustomersQuery(), CancellationToken.None);
 
-        // Assert
         result.Should().BeEquivalentTo(customerModels);
         _unitOfWorkMock.Verify(x => x.Customers.GetAllAsync(), Times.Once);
         _mapperMock.Verify(x => x.Map<IEnumerable<CustomerModel>>(customers), Times.Once);
@@ -76,14 +77,11 @@ public class GetCustomersQueryHandlerTests : BaseTest
     [Test]
     public void Handle_ShouldLogError_WhenExceptionOccurs()
     {
-        // Arrange
         _unitOfWorkMock.Setup(x => x.Customers.GetAllAsync()).ThrowsAsync(new Exception("Database error"));
 
-        // Act
         Func<Task> act = async () => await _handler.Handle(new GetCustomers.GetCustomersQuery(), CancellationToken.None);
 
-        // Assert
-        act.Should().Throw<ApplicationException>().WithMessage("Database error");
+        act.Should().ThrowAsync<ApplicationException>().Result.WithMessage("Database error");
         _loggerMock.Verify(x => x.LogError(It.IsAny<Exception>(), "Database error"), Times.Once);
     }
 }

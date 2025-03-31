@@ -11,13 +11,10 @@ public class ProductsControllerTests : IntegrationTestBase
     [Test]
     public async Task GetAll_ShouldReturnProducts()
     {
-        // Arrange
         var client = CreateClient();
 
-        // Act
         var response = await client.GetAsync("/api/products");
 
-        // Assert
         response.EnsureSuccessStatusCode();
         var content = await response.Content.ReadAsStringAsync();
         Assert.IsNotEmpty(content);

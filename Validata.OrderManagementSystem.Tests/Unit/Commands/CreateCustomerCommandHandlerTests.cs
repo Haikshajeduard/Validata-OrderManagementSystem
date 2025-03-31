@@ -1,4 +1,5 @@
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -7,6 +8,8 @@ using System.Threading.Tasks;
 using Validata.OrderManagementSystem.Application.CQRS.Commands.Customers;
 using Validata.OrderManagementSystem.Domain.Entities;
 using Validata.OrderManagementSystem.Persistence;
+using Validata.OrderManagementSystem.Persistence.Repositories;
+using Validata.OrderManagementSystem.Persistence.Repositories.OrderItems;
 
 namespace Validata.OrderManagementSystem.Tests.Unit.Commands;
 
@@ -44,7 +47,6 @@ public class CreateCustomerCommandHandlerTests : BaseTest
     [Test]
     public async Task Handle_ShouldCreateCustomer_WhenRequestIsValid()
     {
-        // Arrange
         var command = new CreateCustomer.CreateCustomerCommand
         {
             Name = "John Doe",
@@ -63,10 +65,8 @@ public class CreateCustomerCommandHandlerTests : BaseTest
         _unitOfWorkMock.Setup(x => x.Customers.AddAsync(It.IsAny<Customer>())).ReturnsAsync(customer);
         _unitOfWorkMock.Setup(x => x.SaveChangesAsync()).ReturnsAsync(1);
 
-        // Act
         var result = await _handler.Handle(command, CancellationToken.None);
 
-        // Assert
         result.Should().Be(customer.Id);
         _unitOfWorkMock.Verify(x => x.Customers.AddAsync(It.Is<Customer>(c =>
             c.Name == command.Name &&
@@ -78,20 +78,16 @@ public class CreateCustomerCommandHandlerTests : BaseTest
     [Test]
     public void Handle_ShouldThrowArgumentNullException_WhenRequestIsNull()
     {
-        // Arrange
         CreateCustomer.CreateCustomerCommand command = null;
 
-        // Act
         Func<Task> act = async () => await _handler.Handle(command, CancellationToken.None);
 
-        // Assert
-        act.Should().Throw<ArgumentNullException>().WithMessage("Request cannot be null");
+        act.Should().ThrowAsync<ArgumentNullException>().Result.WithMessage("Request cannot be null");
     }
 
     [Test]
     public async Task Handle_ShouldLogError_WhenExceptionOccurs()
     {
-        // Arrange
         var command = new CreateCustomer.CreateCustomerCommand
         {
             Name = "John Doe",
@@ -101,10 +97,8 @@ public class CreateCustomerCommandHandlerTests : BaseTest
 
         _unitOfWorkMock.Setup(x => x.Customers.AddAsync(It.IsAny<Customer>())).ThrowsAsync(new Exception("Database error"));
 
-        // Act
         Func<Task> act = async () => await _handler.Handle(command, CancellationToken.None);
 
-        // Assert
         await act.Should().ThrowAsync<ApplicationException>().WithMessage("Database error");
         _loggerMock.Verify(x => x.LogError(It.IsAny<Exception>(), "Database error"), Times.Once);
     }
@@ -112,7 +106,6 @@ public class CreateCustomerCommandHandlerTests : BaseTest
     [Test]
     public async Task Handle_ShouldThrowApplicationException_WhenSaveChangesFails()
     {
-        // Arrange
         var command = new CreateCustomer.CreateCustomerCommand
         {
             Name = "John Doe",
@@ -131,10 +124,8 @@ public class CreateCustomerCommandHandlerTests : BaseTest
         _unitOfWorkMock.Setup(x => x.Customers.AddAsync(It.IsAny<Customer>())).ReturnsAsync(customer);
         _unitOfWorkMock.Setup(x => x.SaveChangesAsync()).ReturnsAsync(0);
 
-        // Act
         Func<Task> act = async () => await _handler.Handle(command, CancellationToken.None);
 
-        // Assert
-        await act.Should().ThrowAsync<ApplicationException>().WithMessage("Failed to save changes.");
+        act.Should().ThrowAsync<ApplicationException>().Result.WithMessage("Failed to save changes.");
     }
 }

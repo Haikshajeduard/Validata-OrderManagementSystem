@@ -1,4 +1,5 @@
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -7,6 +8,8 @@ using System.Threading.Tasks;
 using Validata.OrderManagementSystem.Application.CQRS.Commands.Customers;
 using Validata.OrderManagementSystem.Domain.Entities;
 using Validata.OrderManagementSystem.Persistence;
+using Validata.OrderManagementSystem.Persistence.Repositories;
+using Validata.OrderManagementSystem.Persistence.Repositories.OrderItems;
 
 namespace Validata.OrderManagementSystem.Tests.Unit.Commands;
 
@@ -44,7 +47,6 @@ public class DeleteCustomerCommandHandlerTests : BaseTest
     [Test]
     public async Task Handle_ShouldDeleteCustomer_WhenCustomerExists()
     {
-        // Arrange
         var command = new DeleteCustomer.DeleteCustomerCommand { Id = 1 };
         var customer = new Customer { Id = 1, Name = "John Doe" };
 
@@ -52,11 +54,9 @@ public class DeleteCustomerCommandHandlerTests : BaseTest
         _unitOfWorkMock.Setup(x => x.Customers.Delete(customer));
         _unitOfWorkMock.Setup(x => x.SaveChangesAsync()).ReturnsAsync(1);
 
-        // Act
         var result = await _handler.Handle(command, CancellationToken.None);
 
-        // Assert
-        result.Should().Be(Unit.Value);
+        result.Should().Be(MediatR.Unit.Value);
         _unitOfWorkMock.Verify(x => x.Customers.GetByIdAsync(command.Id), Times.Once);
         _unitOfWorkMock.Verify(x => x.Customers.Delete(customer), Times.Once);
         _unitOfWorkMock.Verify(x => x.SaveChangesAsync(), Times.Once);
@@ -65,22 +65,18 @@ public class DeleteCustomerCommandHandlerTests : BaseTest
     [Test]
     public void Handle_ShouldThrowException_WhenCustomerDoesNotExist()
     {
-        // Arrange
         var command = new DeleteCustomer.DeleteCustomerCommand { Id = 1 };
 
         _unitOfWorkMock.Setup(x => x.Customers.GetByIdAsync(command.Id)).ReturnsAsync((Customer)null);
 
-        // Act
         Func<Task> act = async () => await _handler.Handle(command, CancellationToken.None);
 
-        // Assert
-        act.Should().Throw<Exception>().WithMessage("Customer not found");
+        act.Should().ThrowAsync<Exception>().Result.WithMessage("Customer not found");
     }
 
     [Test]
     public async Task Handle_ShouldLogInformation_WhenCustomerIsDeleted()
     {
-        // Arrange
         var command = new DeleteCustomer.DeleteCustomerCommand { Id = 1 };
         var customer = new Customer { Id = 1, Name = "John Doe" };
 
@@ -88,11 +84,9 @@ public class DeleteCustomerCommandHandlerTests : BaseTest
         _unitOfWorkMock.Setup(x => x.Customers.Delete(customer));
         _unitOfWorkMock.Setup(x => x.SaveChangesAsync()).ReturnsAsync(1);
 
-        // Act
         var result = await _handler.Handle(command, CancellationToken.None);
 
-        // Assert
-        result.Should().Be(Unit.Value);
+        result.Should().Be(MediatR.Unit.Value);
         _loggerMock.Verify(x => x.LogInformation($"Customer {customer.Name} with id: {customer.Id} deleted"), Times.Once);
     }
 }

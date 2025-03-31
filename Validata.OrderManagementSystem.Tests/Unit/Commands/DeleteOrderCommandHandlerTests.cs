@@ -1,4 +1,5 @@
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -7,6 +8,8 @@ using System.Threading.Tasks;
 using Validata.OrderManagementSystem.Application.CQRS.Commands.Orders;
 using Validata.OrderManagementSystem.Domain.Entities;
 using Validata.OrderManagementSystem.Persistence;
+using Validata.OrderManagementSystem.Persistence.Repositories;
+using Validata.OrderManagementSystem.Persistence.Repositories.OrderItems;
 
 namespace Validata.OrderManagementSystem.Tests.Unit.Commands;
 
@@ -44,7 +47,6 @@ public class DeleteOrderCommandHandlerTests : BaseTest
     [Test]
     public async Task Handle_ShouldDeleteOrder_WhenOrderExists()
     {
-        // Arrange
         var command = new DeleteOrder.DeleteOrderCommand { Id = 1 };
         var order = new Order { Id = 1 };
 
@@ -52,11 +54,9 @@ public class DeleteOrderCommandHandlerTests : BaseTest
         _unitOfWorkMock.Setup(x => x.Orders.Delete(order));
         _unitOfWorkMock.Setup(x => x.SaveChangesAsync()).ReturnsAsync(1);
 
-        // Act
         var result = await _handler.Handle(command, CancellationToken.None);
 
-        // Assert
-        result.Should().Be(Unit.Value);
+        result.Should().Be(MediatR.Unit.Value);
         _unitOfWorkMock.Verify(x => x.Orders.GetByIdAsync(command.Id), Times.Once);
         _unitOfWorkMock.Verify(x => x.Orders.Delete(order), Times.Once);
         _unitOfWorkMock.Verify(x => x.SaveChangesAsync(), Times.Once);
@@ -65,15 +65,12 @@ public class DeleteOrderCommandHandlerTests : BaseTest
     [Test]
     public void Handle_ShouldThrowException_WhenOrderDoesNotExist()
     {
-        // Arrange
         var command = new DeleteOrder.DeleteOrderCommand { Id = 1 };
 
         _unitOfWorkMock.Setup(x => x.Orders.GetByIdAsync(command.Id)).ReturnsAsync((Order)null);
 
-        // Act
         Func<Task> act = async () => await _handler.Handle(command, CancellationToken.None);
 
-        // Assert
-        act.Should().Throw<Exception>().WithMessage("Order not found");
+        act.Should().ThrowAsync<Exception>().Result.WithMessage("Order not found");
     }
 }

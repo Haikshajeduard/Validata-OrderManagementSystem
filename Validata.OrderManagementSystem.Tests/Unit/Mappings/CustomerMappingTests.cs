@@ -22,7 +22,6 @@ public class CustomerMappingTests
     [Test]
     public void CustomerToCustomerModel_ShouldMapCorrectly()
     {
-        // Arrange
         var customer = new Customer
         {
             Id = 1,
@@ -31,10 +30,8 @@ public class CustomerMappingTests
             PostalCode = 12345
         };
 
-        // Act
         var result = _mapper.Map<CustomerModel>(customer);
 
-        // Assert
         result.Name.Should().Be(customer.Name);
         result.Address.Should().Be(customer.Address);
         result.PostalCode.Should().Be(customer.PostalCode);

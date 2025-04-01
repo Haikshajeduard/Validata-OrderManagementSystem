@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.VisualStudio.TestPlatform.TestHost;
 using NUnit.Framework;
+using System.Linq;
 using System.Net.Http;
 using Validata.OrderManagementSystem.Persistence;
 
@@ -71,5 +73,10 @@ namespace Validata.OrderManagementSystem.Tests.Integration
         }
 
         protected HttpClient CreateClient() => Factory.CreateClient();
+        protected IServiceScope CreateScope()
+        {
+            var scopeFactory = Factory.Services.GetService<IServiceScopeFactory>();
+            return scopeFactory.CreateScope();
+        }
     }
 }
